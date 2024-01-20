@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import "swiper/css"
 import "swiper/css/navigation"
@@ -11,6 +11,7 @@ import Sfour from "./Sfour"
 import Sfive from "./Sfive"
 import Ssix from "./Ssix"
 import Sseven from "./Sseven"
+import Loader from '../../components/loader/Loader'
 import {
   Navigation,
   Pagination,
@@ -18,74 +19,76 @@ import {
   A11y,
   Autoplay,
 } from "swiper/modules"
-const Slider = () => {
+const Slider = ({ data }) => {
   return (
     <div className="review-container">
-    <h2 className=" heading">What Our Customers Say</h2>
-    <div className="">
-      <Swiper
-        slidesPerView={1}
-        breakpoints={{
-          640: {
-            slidesPerView: 1,
-            spaceBetween: 20,
-          },
-          1020: {
-            slidesPerView: 2,
-            spaceBetween: 40,
-          },
-       
-          1600: {
-            slidesPerView: 3,
-            spaceBetween: 50,
-          },
-          1800: {
-            slidesPerView: 4,
-            spaceBetween: 50,
-          },
-        }}
-        // className="mySwiper"
-        // install Swiper modules
-        modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
-        spaceBetween={50}
-        autoplay={{
-          delay: 2000,
-          // disableOnInteraction: false
-        }}
-        navigation
-        pagination={{ clickable: true }}
-        // scrollbar={{ draggable: true }}
-        onSwiper={(swiper) => console.log(swiper)}
-        onSlideChange={() => console.log("slide change")}
-      >
-        <SwiperSlide>
-          {" "}
-          <Sone />{" "}
-        </SwiperSlide>
-        <SwiperSlide>
-          {" "}
-          <Stwo />{" "}
-        </SwiperSlide>
+      {data?.length > 0 ? (
+        <>
+          <h2 className=" heading">What Our Customers Say</h2>
+          <div className="">
+            <Swiper
+              slidesPerView={1}
+              breakpoints={{
+                640: {
+                  slidesPerView: 1,
+                  spaceBetween: 20,
+                },
+                1020: {
+                  slidesPerView: 2,
+                  spaceBetween: 40,
+                },
 
-        <SwiperSlide>
-          <Sthree />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Sfour />
-        </SwiperSlide>
+                1600: {
+                  slidesPerView: 3,
+                  spaceBetween: 50,
+                },
+                1800: {
+                  slidesPerView: 4,
+                  spaceBetween: 50,
+                },
+              }}
+              modules={[Navigation, Pagination, Scrollbar, A11y, Autoplay]}
+              spaceBetween={50}
+              autoplay={{
+                delay: 2000,
+              }}
+              navigation
+              pagination={{ clickable: true }}
+              onSwiper={(swiper) => console.log(swiper)}
+              onSlideChange={() => console.log("slide change")}
+            >
+              <SwiperSlide>
+                {" "}
+                <Sone data={data} />{" "}
+              </SwiperSlide>
+              <SwiperSlide>
+                {" "}
+                <Stwo data={data} />{" "}
+              </SwiperSlide>
 
-        <SwiperSlide>
-          <Sfive />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Ssix />
-        </SwiperSlide>
-        <SwiperSlide>
-          <Sseven />
-        </SwiperSlide>
-      </Swiper>
+              <SwiperSlide>
+                <Sthree data={data} />
+              </SwiperSlide>
+              <SwiperSlide>
+                <Sfour data={data} />
+              </SwiperSlide>
+
+              <SwiperSlide>
+                <Sfive data={data} />
+              </SwiperSlide>
+              <SwiperSlide>
+                <Ssix data={data} />
+              </SwiperSlide>
+              <SwiperSlide>
+                <Sseven data={data} />
+              </SwiperSlide>
+            </Swiper>
+          </div>
+        </>
+      ) : (
+        <Loader/>
+      )}
     </div>
-  </div>
   )
 }
 

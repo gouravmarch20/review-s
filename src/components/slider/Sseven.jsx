@@ -7,7 +7,7 @@ const Sone = () => {
         <p className=" text-4xl	 font-bold	 ">“</p>
       </div>
 
-      <p className="pt-12 px-16 text ">{data?.[0]?.text}</p>
+      <p className="pt-12 px-16 text ">{data?.[6]?.text}</p>
       <div className="flex px-16 mt-7  items-center ">
         <div>
           <img
@@ -17,8 +17,8 @@ const Sone = () => {
           />
         </div>
         <div className="ml-7">
-          <p className="name">{data?.[1]?.name}</p>
-          <p className="role">{data?.[1]?.role}</p>
+          <p className="name">{data?.[6]?.name}</p>
+          <p className="role">{data?.[6]?.role}</p>
         </div>
       </div>
     </div>
