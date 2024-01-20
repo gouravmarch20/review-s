@@ -1,8 +1,8 @@
 import React from "react"
-import { data } from "../data/data"
+import { data } from "../../data/data"
 const Sone = () => {
   return (
-    <div className=" max-w-xl	   bg-[#FFF] shadow-lg relative mt-12 ">
+    <div className=" max-w-xl	mx-auto  bg-[#FFF] shadow-lg relative mt-12 ">
       <div className="w-[80px] h-[80px]  bg-[#007FF4]  absolute right-0 top-[-40px] z-20 rounded-full text-center  flex justify-center items-center text-white ">
         <p className=" text-4xl	 font-bold	 ">“</p>
       </div>

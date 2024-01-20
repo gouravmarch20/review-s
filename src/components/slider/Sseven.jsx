@@ -1,5 +1,5 @@
 import React from "react"
-import { data } from "../data/data"
+import { data } from "../../data/data"
 const Sone = () => {
   return (
     <div className=" max-w-xl	   bg-[#FFF] shadow-lg relative mt-12 ">
