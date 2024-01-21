@@ -14,7 +14,6 @@ const App = () => {
         return response.json()
       })
       .catch((error) => {})
-    console.log(88, res?.data)
     setData(res?.data)
   }
   useEffect(() => {

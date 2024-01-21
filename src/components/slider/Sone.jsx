@@ -7,8 +7,8 @@ const Sone = ({data}) => {
         <p className=" text-4xl	 font-bold	 ">“</p>
       </div>
 
-      <p className="pt-12 px-16 text ">{data?.[0]?.Reviews}</p>
-      <div className="flex px-16 mt-7  items-center ">
+      <p className="pt-12 px-16 text ">{data?.Reviews.substring(0,120)} {data?.Reviews?.length > 120 && "..."}</p>
+      <div className="flex mt-12 pl-12 items-center ">
         <div>
           <img
             src="https://i.pravatar.cc/300"
@@ -16,9 +16,9 @@ const Sone = ({data}) => {
             className="w-[50px] h-[50px] rounded-full"
           />
         </div>
-        <div className="ml-7">
-          <p className="name">{data?.[0]?.Name}</p>
-          <p className="role">{data?.[0]?.Platform}</p>
+        <div className="ml-7 ">
+          <p className="name">{data?.Name}</p>
+          <p className="role">{data?.Platform}</p>
         </div>
       </div>
     </div>

@@ -5,13 +5,8 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/scrollbar"
 import Sone from "./Sone"
-import Stwo from "./Stwo"
-import Sthree from "./Sthree"
-import Sfour from "./Sfour"
-import Sfive from "./Sfive"
-import Ssix from "./Ssix"
-import Sseven from "./Sseven"
-import Loader from '../../components/loader/Loader'
+
+import Loader from "../../components/loader/Loader"
 import {
   Navigation,
   Pagination,
@@ -57,36 +52,23 @@ const Slider = ({ data }) => {
               onSwiper={(swiper) => console.log(swiper)}
               onSlideChange={() => console.log("slide change")}
             >
-              <SwiperSlide>
-                {" "}
-                <Sone data={data} />{" "}
-              </SwiperSlide>
-              <SwiperSlide>
-                {" "}
-                <Stwo data={data} />{" "}
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <Sthree data={data} />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Sfour data={data} />
-              </SwiperSlide>
-
-              <SwiperSlide>
-                <Sfive data={data} />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Ssix data={data} />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Sseven data={data} />
-              </SwiperSlide>
+              {
+                // console.log(88 ,data)
+              }
+              {data?.map((d, index) => (
+                <>
+                  <SwiperSlide>
+                    {" "}
+                    {console.log(99, d)}
+                    <Sone data={d} />{" "}
+                  </SwiperSlide>
+                </>
+              ))}
             </Swiper>
           </div>
         </>
       ) : (
-        <Loader/>
+        <Loader />
       )}
     </div>
   )
