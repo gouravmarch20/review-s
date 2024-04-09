@@ -104,3 +104,25 @@ body {
     font-size: 40px;
   }
 }
+
+
+/* layout */
+
+.market-swipper-img {
+	height: 300px;
+}
+
+.market-swipper-thumbnail {
+	height: 100px;
+}
+
+/*  */
+.market-swipper-thumb-container .swiper-slide {
+	opacity: 0.4;
+
+}
+
+.market-swipper-thumb-container .swiper-slide-thumb-active {
+	opacity: 1;
+}
+

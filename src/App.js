@@ -4,6 +4,7 @@ import Subscribe from "./components/suscribe/Subscribe"
 import Slider from "./components/slider/Slider"
 import Footer from "./components/footer/Footer"
 import FooterSection from "./components/footer/FooterSection"
+import SwipperWithThumbnail from "./components/SwipperWithThumbnail"
 
 const App = () => {
   const [data, setData] = useState([])
@@ -22,6 +23,8 @@ const App = () => {
 
   return (
     <div className="review p-2 pt-6">
+      <SwipperWithThumbnail/>
+
       <Slider data={data} />
 
       <Subscribe />
