@@ -1,0 +1,35 @@
+.currency-info-card {
+  border-top: 1px solid lavender;
+}
+.currency-img {
+  height: 25px;
+  width: 25px;
+  margin-left: 10%;
+}
+.currency-img-name {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.currency-name-symbol span {
+  display: block;
+}
+.currency-name {
+  font-weight: 600;
+  margin-left: 1px;
+}
+.currency-symbol {
+  font-size: 0.8em;
+  opacity: "0.7";
+}
+.currency-column-center {
+  text-align: center;
+  font-size: 0.95rem;
+  padding: 15px 0;
+}
+.currency-info-card:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.39, 0.575, 0.565, 1);
+}

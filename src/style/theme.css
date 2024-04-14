@@ -1,6 +1,5 @@
 :root {
   --body_background: white;
-  --body_color: black;
   --link_color: blue;
 }
 * {
@@ -9,7 +8,7 @@
 
 [theme-mode="dark"] {
   --body_background: black;
-  --body_color: white;
+
   --link_color: pink;
 }
 body {

@@ -6,7 +6,7 @@ import "swiper/css/pagination"
 import "swiper/css/scrollbar"
 import Sone from "./Sone"
 
-import Loader from "../../components/loader/Loader"
+import Loader from "@/components/home/loader/Loader"
 import {
   Navigation,
   Pagination,
