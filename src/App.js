@@ -44,6 +44,8 @@ const App = () => {
   }, [theme]);
 
   const handleThemeChange = () => {
+
+
     if (theme === LIGHT) {
       setDarkMode();
     } else {
