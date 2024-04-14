@@ -49,17 +49,13 @@ const Slider = ({ data }) => {
               }}
               navigation
               pagination={{ clickable: true }}
-              onSwiper={(swiper) => console.log(swiper)}
-              onSlideChange={() => console.log("slide change")}
+              // onSwiper={(swiper) => console.log(swiper)}
+              // onSlideChange={() => console.log("slide change")}
             >
-              {
-                // console.log(88 ,data)
-              }
+
               {data?.map((d, index) => (
                 <>
                   <SwiperSlide>
-                    {" "}
-                    {console.log(99, d)}
                     <Sone data={d} />{" "}
                   </SwiperSlide>
                 </>

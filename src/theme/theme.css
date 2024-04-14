@@ -1,0 +1,25 @@
+:root {
+  --body_background: white;
+  --body_color: black;
+  --link_color: blue;
+}
+* {
+  transition: all 0.3s ease-in-out;
+}
+
+[theme-mode="dark"] {
+  --body_background: black;
+  --body_color: white;
+  --link_color: pink;
+}
+body {
+  font-family: "Source Sans Pro";
+  background: var(--body_background);
+  color: var(--body_color);
+}
+/*
+
+.link{
+	color: var(--link_color);
+  text-decoration: none;
+} */
