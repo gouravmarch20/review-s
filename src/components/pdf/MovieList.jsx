@@ -28,6 +28,9 @@ export default function MovieList() {
   const [year, setYear] = useState("");
   const [movieDetails, setDetails] = useState([]);
   const [show, setShow] = useState(false);
+  setTimeout(() => {
+    setShow(true)
+  }, 1000);
 
   const fetchMovie = async (e) => {
     const selectedYear = e.target.value;
@@ -57,7 +60,7 @@ export default function MovieList() {
           </option>
         ))}
       </select>
-      {true && (
+      {show && (
         <PDFDownloadLink
           document={<PdfDocument data={movieDetails} />}
           fileName="movielist.pdf"
