@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState } from "react";
 import Axios from "axios";
 import { PDFDownloadLink } from "@react-pdf/renderer";
@@ -26,18 +27,19 @@ const years = [
 export default function MovieList() {
   const [year, setYear] = useState("");
   const [movieDetails, setDetails] = useState([]);
-  const [show, setHide] = useState(false);
+  const [show, setShow] = useState(false);
 
   const fetchMovie = async (e) => {
-    setYear(e.target.value);
+    const selectedYear = e.target.value;
+    setYear(selectedYear);
     try {
-      let res = await Axios(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${year}&sort_by=vote_average.desc`
+      const res = await Axios.get(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${selectedYear}&sort_by=vote_average.desc`
       );
       setDetails(res.data.results);
-      setHide(true);
+      setShow(true);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -49,15 +51,13 @@ export default function MovieList() {
         <option defaultValue="" disabled>
           Select your option
         </option>
-        {years.map((year, index) => {
-          return (
-            <option key={index} value={year.value}>
-              {year.text}
-            </option>
-          );
-        })}
+        {years.map((year, index) => (
+          <option key={index} value={year.value}>
+            {year.text}
+          </option>
+        ))}
       </select>
-      {show && (
+      {true && (
         <PDFDownloadLink
           document={<PdfDocument data={movieDetails} />}
           fileName="movielist.pdf"
@@ -70,48 +70,42 @@ export default function MovieList() {
             width: "40%",
           }}
         >
-          {({ blob, url, loading, error }) =>
-            loading ? "Loading document..." : "Download Pdf"
-          }
+          {({ loading }) => (loading ? "Loading document..." : "Download Pdf1")}
         </PDFDownloadLink>
       )}
-      {Array.isArray(movieDetails)
-        ? movieDetails.map((a, index) => {
-            return (
-              <div class="card" key={index}>
-                <img
-                  src={
-                    a.poster_path !== null
-                      ? `${POSTER_PATH}${a.poster_path}`
-                      : "150.jpg"
-                  }
-                  alt="Avatar"
-                  styles={{ width: "100%" }}
-                />
-                <div class="card-container">
-                  <h4>
-                    <b>{a.title}</b>
-                  </h4>
-                  <div className="card-subsection">
-                    <p>{a.vote_count} votes</p>
-                    <p>
-                      <span className="votes">{a.popularity}</span> Popularity{" "}
-                    </p>
-                  </div>
-                  <p>{a.overview}</p>
-                  <div className="card-footer">
-                    <p>Language: {a.original_language.toUpperCase()}</p>
-                    <p>Average Votes: {a.vote_average}</p>
-                    <p>
-                      Release Date:{" "}
-                      {moment(a.release_date, "YYYY-MM-DD").format(" MMMM D Y")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        : ""}
+      {movieDetails.map((movie, index) => (
+        <div className="card" key={index}>
+          {/* <img
+            src={
+              movie.poster_path !== null
+                ? `${POSTER_PATH}${movie.poster_path}`
+                : "150.jpg"
+            }
+            alt="Avatar"
+            style={{ width: "100%" }}
+          /> */}
+          <div className="card-container">
+            <h4>
+              <b>{movie.title}</b>
+            </h4>
+            <div className="card-subsection">
+              <p>{movie.vote_count} votes</p>
+              <p>
+                <span className="votes">{movie.popularity}</span> Popularity{" "}
+              </p>
+            </div>
+            <p>{movie.overview}</p>
+            <div className="card-footer">
+              <p>Language: {movie.original_language.toUpperCase()}</p>
+              <p>Average Votes: {movie.vote_average}</p>
+              <p>
+                Release Date:{" "}
+                {moment(movie.release_date, "YYYY-MM-DD").format("MMMM D YYYY")}
+              </p>
+            </div>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
