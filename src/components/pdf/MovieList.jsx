@@ -1,11 +1,12 @@
 "use client";
-
 import React, { useState } from "react";
 import Axios from "axios";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import { API_KEY, POSTER_PATH } from "./constants";
-import { PdfDocument } from "./Movie";
+import PdfDocument from "./Movie";
 import moment from "moment";
+import carBlack from "@/assets/blackCar.png";
+import Image from "next/image";
 
 const years = [
   { value: "2010", text: "2010" },
@@ -27,38 +28,44 @@ const years = [
 export default function MovieList() {
   const [year, setYear] = useState("");
   const [movieDetails, setDetails] = useState([]);
-  const [show, setShow] = useState(false);
-  setTimeout(() => {
-    setShow(true)
-  }, 1000);
+  const [show, setHide] = useState(false);
 
   const fetchMovie = async (e) => {
-    const selectedYear = e.target.value;
-    setYear(selectedYear);
+    setYear(e.target.value);
     try {
-      const res = await Axios.get(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${selectedYear}&sort_by=vote_average.desc`
+      let res = await Axios(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${year}&sort_by=vote_average.desc`
       );
       setDetails(res.data.results);
-      setShow(true);
+      setHide(true);
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
 
   return (
     <div className="container">
+      {/* <img src={carBlack} width={200} height={200} /> */}
+      <Image
+        // src="/profile.png"
+        src={carBlack}
+        width={500}
+        height={500}
+        alt="Picture of the author"
+      />
       <h2>Best movies of the year</h2>
       <label htmlFor="movies">Select Year</label>
       <select id="movies" className="select" onChange={fetchMovie}>
         <option defaultValue="" disabled>
           Select your option
         </option>
-        {years.map((year, index) => (
-          <option key={index} value={year.value}>
-            {year.text}
-          </option>
-        ))}
+        {years.map((year, index) => {
+          return (
+            <option key={index} value={year.value}>
+              {year.text}
+            </option>
+          );
+        })}
       </select>
       {show && (
         <PDFDownloadLink
@@ -73,42 +80,48 @@ export default function MovieList() {
             width: "40%",
           }}
         >
-          {({ loading }) => (loading ? "Loading document..." : "Download Pdf1")}
+          {({ blob, url, loading, error }) =>
+            loading ? "Loading document..." : "Download Pdf"
+          }
         </PDFDownloadLink>
       )}
-      {movieDetails.map((movie, index) => (
-        <div className="card" key={index}>
-          {/* <img
-            src={
-              movie.poster_path !== null
-                ? `${POSTER_PATH}${movie.poster_path}`
-                : "150.jpg"
-            }
-            alt="Avatar"
-            style={{ width: "100%" }}
-          /> */}
-          <div className="card-container">
-            <h4>
-              <b>{movie.title}</b>
-            </h4>
-            <div className="card-subsection">
-              <p>{movie.vote_count} votes</p>
-              <p>
-                <span className="votes">{movie.popularity}</span> Popularity{" "}
-              </p>
-            </div>
-            <p>{movie.overview}</p>
-            <div className="card-footer">
-              <p>Language: {movie.original_language.toUpperCase()}</p>
-              <p>Average Votes: {movie.vote_average}</p>
-              <p>
-                Release Date:{" "}
-                {moment(movie.release_date, "YYYY-MM-DD").format("MMMM D YYYY")}
-              </p>
-            </div>
-          </div>
-        </div>
-      ))}
+      {Array.isArray(movieDetails)
+        ? movieDetails.map((a, index) => {
+            return (
+              <div class="card" key={index}>
+                <img
+                  src={
+                    a.poster_path !== null
+                      ? `${POSTER_PATH}${a.poster_path}`
+                      : "150.jpg"
+                  }
+                  alt="Avatar"
+                  styles={{ width: "100%" }}
+                />
+                <div class="card-container">
+                  <h4>
+                    <b>{a.title}</b>
+                  </h4>
+                  <div className="card-subsection">
+                    <p>{a.vote_count} votes</p>
+                    <p>
+                      <span className="votes">{a.popularity}</span> Popularity{" "}
+                    </p>
+                  </div>
+                  <p>{a.overview}</p>
+                  <div className="card-footer">
+                    <p>Language: {a.original_language.toUpperCase()}</p>
+                    <p>Average Votes: {a.vote_average}</p>
+                    <p>
+                      Release Date:{" "}
+                      {moment(a.release_date, "YYYY-MM-DD").format(" MMMM D Y")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        : ""}
     </div>
   );
 }

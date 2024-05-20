@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Page,
   Text,
@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   movieContainer: {
-    borderRadius: 5,
-    marginTop: 20,
+    borderRadius: "5px",
+    marginTop: "10px",
   },
   movieDetails: {
     display: "flex",
@@ -34,8 +34,9 @@ const styles = StyleSheet.create({
   movieOverview: {
     fontSize: 10,
   },
+
   image: {
-    height: 150,
+    height: 200,
     width: 150,
   },
   subtitle: {
@@ -85,52 +86,68 @@ const styles = StyleSheet.create({
   },
 });
 
-export function PdfDocument({ data }) {
-  return (
-    <Document>
-      <Page style={styles.page}>
-        <Text style={styles.movieTitle}> hello pdf test </Text>
-        <Text style={styles.movieTitle}> hello pdf test </Text>
-        <Text style={styles.movieTitle}> hello pdf test </Text>
-        <Text style={styles.movieTitle}> hello pdf test </Text>
-        <Text style={styles.movieTitle}> hello pdf test </Text>
-        <Text style={styles.movieTitle}> hello pdf test </Text>
+import myImage from "/public/assets/mappls.png";
 
-        {/* {data.map((movie, index) => (
-          <View key={index} style={styles.movieContainer}>
-            <View style={styles.movieDetails}>
-              <Text style={styles.movieTitle}>{movie.title}</Text>
-              <View style={styles.subtitle}>
-                <View style={styles.vote}>
-                  <Image source="star.png" style={styles.rating} />
-                  <Text style={styles.vote_text}>{movie.vote_count} votes</Text>
-                </View>
-                <View style={styles.vote}>
-                  <Text style={styles.vote_pop}>{movie.popularity}</Text>
-                  <Text style={styles.vote_pop_text}>Popularity</Text>
-                </View>
-              </View>
-              <View style={styles.overviewContainer}>
-                <Text style={styles.movieOverview}>{movie.overview}</Text>
-              </View>
-              <View style={styles.detailsFooter}>
-                <Text style={styles.lang}>
-                  Language: {movie.original_language.toUpperCase()}
-                </Text>
-                <Text style={styles.vote_average}>
-                  Average Votes: {movie.vote_average}
-                </Text>
-                <Text style={styles.vote_average}>
-                  Release Date:{" "}
-                  {moment(movie.release_date, "YYYY-MM-DD").format(
-                    "MMMM D YYYY"
-                  )}
-                </Text>
-              </View>
+import carBlack from "/public/assets/blackCar.png";
+console.log(2222, carBlack.src);
+
+export default function PdfDocument(props) {
+  const [imageBase64, setImageBase64] = useState("");
+  const [imageBase64_1, setImageBase64_1] = useState("");
+  const [show, setShow] = useState(false);
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const response = await fetch(myImage.src);
+        const response1 = await fetch(carBlack.src);
+
+        const blob = await response.blob();
+        const blob1 = await response1.blob();
+
+        const base64 = await convertToBase64(blob);
+        const base64_1 = await convertToBase64(blob1);
+
+        setImageBase64(base64);
+        setImageBase64_1(base64_1);
+        setShow(true);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+      }
+    };
+
+    fetchImage();
+  }, []);
+
+  return (
+    <>
+      {/* <h2>dd</h2> */}
+      {show && (
+        <Document>
+          <Page style={styles.page}>
+            <View style={styles.movieContainer}>
+              <h2>ddd</h2>
+
+              {console.log("g1", imageBase64)}
+              {/* {console.log("g12", imageBase64_1)} */}
+              {/* <img /> */}
+
+              {imageBase64 && <Image style={styles.image} src={imageBase64} />}
+              {imageBase64_1 && (
+                <Image style={styles.image} src={imageBase64_1} />
+              )}
             </View>
-          </View>
-        ))} */}
-      </Page>
-    </Document>
+          </Page>
+        </Document>
+      )}
+    </>
   );
 }
