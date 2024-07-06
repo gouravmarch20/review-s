@@ -23,47 +23,67 @@ const Hover = ({ chatItem,  show, location }) => {
 
 
 
-  // const handleMouseEnter = (event, locationName) => {
-  //   if (currentHoveredLocation === locationName) return;
-
-  //   const location = chatItem?.placesData.find(loc => loc.name === locationName);
-  //   setHoveredLocation(location);
-  //   setShowModal(true);
-  //   setCurrentHoveredLocation(locationName);
-
-  //   const parentDiv = document.getElementById('parent-div');
-	// 	console.log(`parentDiv` , parentDiv)
-
-  //   if (!parentDiv) return;
-
-  //   const rect = event.target.getBoundingClientRect();
-  //   const parentRect = parentDiv.getBoundingClientRect();
-	// 	console.log(`parentDiv_1` , parentRect)
-	// 	console.log(`child_1` , rect)
 
 
-	// 	let top = rect.top - parentRect.top;
-  //   let left = rect.right - parentRect.left + 10;
-	// 	let bottom = rect.bottom - parentRect.bottom + 10;
-  //   let right = rect.left - parentRect.right + 10;
+	// const handleMouseEnter = (event, locationName) => {
+	// 	if (currentHoveredLocation === locationName) return;
 
-  //   let transformX = "0%";
-  //   let transformY = "0%";
+	// 	const location = chatItem?.placesData.find(loc => loc.name === locationName);
+	// 	setHoveredLocation(location);
+	// 	setShowModal(true);
+	// 	setCurrentHoveredLocation(locationName);
 
-  //   if (left + 200 > parentRect.width) {
-  //     left = rect.left - parentRect.left - 210;
-  //     // transformX = "-10%";
-  //   }
-  //   if (top + 150 > parentRect.height) {
-  //     top = rect.bottom - parentRect.top - 160;
-  //     // transformY = "250%";
-  //   }
+	// 	const parentDiv = document.getElementById('parent-div');
+	// 	if (!parentDiv) return;
 
-  //   setPopup({
-  //     content: locationName,
-  //     position: { top, left, transformX, transformY },
-  //   });
-  // };
+	// 	const rect = event.target.getBoundingClientRect();
+	// 	const parentRect = parentDiv.getBoundingClientRect();
+
+	// 	// Define modal dimensions and margin
+	// 	const modalWidth = 280;
+	// 	const modalHeight = 300;
+	// 	const modalMargin = 10;
+
+	// 	let position = {};
+
+	// 	// Calculate left and transformX based on available space
+	// 	if (rect.right + modalWidth + modalMargin <= parentRect.right) {
+	// 		console.log(`hello`)
+
+	// 		position.left = rect.right + modalMargin;
+	// 		position.transformX = "0%";
+	// 	} else if (rect.left - modalWidth - modalMargin >= parentRect.left) {
+	// 		console.log(`hello`)
+
+	// 		position.left = rect.left - modalWidth - modalMargin;
+	// 		position.transformX = "-100%";
+	// 	} else {
+	// 		console.log(`hello`)
+
+	// 		// Default to showing on the right side of the link if no space on either side
+	// 		position.left = rect.right + modalMargin;
+	// 		position.transformX = "0%";
+	// 	}
+
+	// 	// Calculate top and transformY based on available space
+	// 	if (rect.bottom + modalHeight + modalMargin <= parentRect.bottom) {
+	// 		position.top = rect.bottom + modalMargin;
+	// 		position.transformY = "0%";
+	// 	} else if (rect.top - modalHeight - modalMargin >= parentRect.top) {
+	// 		position.top = rect.top - modalHeight - modalMargin;
+	// 		position.transformY = "-100%";
+	// 	} else {
+	// 		// Default to showing above the link if no space below
+	// 		position.top = rect.top - modalHeight - modalMargin;
+	// 		position.transformY = "-100%";
+	// 	}
+	// 	console.log(`position_44` , position)
+
+	// 	setPopup({
+	// 		content: locationName,
+	// 		position: position,
+	// 	});
+	// };
 
 	const handleMouseEnter = (event, locationName) => {
 		if (currentHoveredLocation === locationName) return;
@@ -77,45 +97,72 @@ const Hover = ({ chatItem,  show, location }) => {
 		if (!parentDiv) return;
 
 		const rect = event.target.getBoundingClientRect();
-		const parentRect = parentDiv.getBoundingClientRect();
+		// const parentRect = parentDiv.getBoundingClientRect();
 
-		// Define modal dimensions and margin
-		const modalWidth = 280;
-		const modalHeight = 300;
-		const modalMargin = 10;
+		// // Define modal dimensions and margin
+		// const modalWidth = 280;
+		// const modalHeight = 300;
+		// const modalMargin = 10;
+
+
+
+    const viewportWidth = parentDiv.innerWidth;
+    const viewportHeight = parentDiv.innerHeight;
+
+    let left = rect.right + 10;
+    let top = rect.top;
+    let transformX = "0%";
+    let transformY = "0%";
+
+    if (rect.right + 200 > viewportWidth) {
+      left = rect.left - 210;
+      transformX = "-10%";
+    }
+    if (rect.bottom + 150 > viewportHeight) {
+      top = rect.bottom - 160;
+      transformY = "250%";
+    }
+
+    setPopup({
+      content  : "hello",
+      position: { top, left, transformX, transformY },
+    });
+
 
 		let position = {};
 
-		// Calculate left and transformX based on available space
-		if (rect.right + modalWidth + modalMargin <= parentRect.right) {
-			position.left = rect.right + modalMargin;
-			position.transformX = "0%";
-		} else if (rect.left - modalWidth - modalMargin >= parentRect.left) {
-			position.left = rect.left - modalWidth - modalMargin;
-			position.transformX = "-100%";
-		} else {
-			// Default to showing on the right side of the link if no space on either side
-			position.left = rect.right + modalMargin;
-			position.transformX = "0%";
-		}
+		// // Calculate left and transformX based on available space
+		// if (rect.right + modalWidth + modalMargin <= parentRect.right) {
+		// 	position.left = rect.right + modalMargin;
+		// 	position.transformX = "0%";
+		// } else if (rect.left - modalWidth - modalMargin >= parentRect.left) {
+		// 	position.left = rect.left - modalWidth - modalMargin;
+		// 	position.transformX = "-100%";
+		// } else {
+		// 	// Default to showing on the right side of the link if no space on either side
+		// 	position.left = rect.right + modalMargin;
+		// 	position.transformX = "0%";
+		// }
 
-		// Calculate top and transformY based on available space
-		if (rect.bottom + modalHeight + modalMargin <= parentRect.bottom) {
-			position.top = rect.bottom + modalMargin;
-			position.transformY = "0%";
-		} else if (rect.top - modalHeight - modalMargin >= parentRect.top) {
-			position.top = rect.top - modalHeight - modalMargin;
-			position.transformY = "-100%";
-		} else {
-			// Default to showing above the link if no space below
-			position.top = rect.top - modalHeight - modalMargin;
-			position.transformY = "-100%";
-		}
+		// // Calculate top and transformY based on available space
+		// if (rect.bottom + modalHeight + modalMargin <= parentRect.bottom) {
+		// 	position.top = rect.bottom + modalMargin;
+		// 	position.transformY = "0%";
+		// } else if (rect.top - modalHeight - modalMargin >= parentRect.top) {
+		// 	position.top = rect.top - modalHeight - modalMargin;
+		// 	position.transformY = "-100%";
+		// } else {
+		// 	// Default to showing below the link if no space above
+		// 	position.top = rect.bottom + modalMargin;
+		// 	position.transformY = "0%";
+		// }
 
-		setPopup({
-			content: locationName,
-			position: position,
-		});
+		// setPopup({
+		// 	content: locationName,
+		// 	// position: position,
+    //   position: { top, left, transformX, transformY },
+
+		// });
 	};
 
 

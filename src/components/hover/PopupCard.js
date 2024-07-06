@@ -8,7 +8,7 @@ const PopupCard = ({ content, position }) => {
   const style = {
     top: position.top,
     left: position.left,
-    // transform: `translate(${position.transformX}, ${position.transformY})`,
+    transform: `translate(${position.transformX}, ${position.transformY})`,
   };
 
   return (

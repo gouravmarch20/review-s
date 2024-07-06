@@ -5,8 +5,7 @@ const Test = () => {
 	const a = {
 		"is_msg_not_printed": 1,
 		"waiting": false,
-		// "message": "Well, {{{GOURAV}}}, if you're an adventurous foodie, Delhi is your culinary paradise. Let's start with the local street food. How about trying the Chole Bhature at {{{Sita Ram Diwan Chand}}}? Or, would you {{{Kuremal Mohan Lal Kulfi Wale}}} the sumptuous parathas from {{{Gali Paranthe Wali}}}? \n\nP.S. Don't miss out on the butter chicken at {{{Kuremal Mohan Lal Kulfi Wale}}} if you're a non-vegetarian. And if you're in for some Mughlai cuisine, head over to {{{Karim's}}}. Go, explore and let your taste buds dance! \n\nBut remember, don't count your calories when you're in Delhi. The city's {{{GOURAV}}} won't {{{Kuremal Mohan Lal Kulfi Wale}}} you! 😄 Well, {{{GOURAV}}}, if you're an adventurous foodie, Delhi is your culinary paradise. Let's start with the local street food. How about trying the Chole Bhature at {{{Sita Ram Diwan Chand}}}? Or, would you {{{Kuremal Mohan Lal Kulfi Wale}}} the sumptuous parathas from {{{Gali Paranthe Wali}}}? \n\nP.S. Don't miss out on the butter chicken at {{{Kuremal Mohan Lal Kulfi Wale}}} if you're a non-vegetarian. And if you're in for some Mughlai cuisine, head over to {{{Karim's}}}. Go, explore and {{{let}}} your taste buds dance! \n\nBut remember, don't count your calories when you're in Delhi. The city's {{{GOURAV}}} won't {{{Kuremal Mohan Lal Kulfi Wale}}} you! 😄Well, {{{GOURAV}}}, if you're an adventurous foodie, Delhi is your culinary paradise. Let's start with the local street food. How about trying the Chole Bhature at {{{Sita Ram Diwan Chand}}}? Or, would you {{{Kuremal Mohan Lal Kulfi Wale}}} the sumptuous parathas from {{{Gali Paranthe Wali}}}? \n\nP.S. Don't miss out on the butter chicken at {{{Kuremal Mohan Lal Kulfi Wale}}} if you're a non-vegetarian. And if you're in for some Mughlai cuisine, head over to {{{Karim's}}}. Go, explore and let your taste buds dance! \n\nBut remember, don't count your calories when you're in Delhi. The city's {{{GOURAV}}} won't {{{Kuremal Mohan Lal Kulfi Wale}}} you! 😄",
-		"message": "Well, {{{GOURAV}}}, if you're an adventurous foodie, Delhi is your culinary paradise. Let's start with the local street food. How about trying the Chole Bhature at {{{Sita Ram Diwan Chand}}}? Or, would you {{{Kuremal Mohan Lal Kulfi Wale}}} the sumptuous parathas from {{{Gali Paranthe Wali}}}? \n\nP.S. Don't miss out on the butter chicken at {{{Kuremal Mohan Lal Kulfi Wale}}}😄",
+		"message": "Well, {{{GOURAV}}}, if you're an adventurous foodie, Delhi is your culinary paradise. Let's start with the local street food. How about trying the Chole Bhature at {{{Sita Ram Diwan Chand}}}? Or, would you {{{Kuremal Mohan Lal Kulfi Wale}}} the sumptuous parathas from {{{Gali Paranthe Wali}}}? \n\nP.S. Don't miss out on the butter chicken at {{{Itachi}}}😄",
 		"image": null,
 		"user": {
 			"_id": "63e3668228635f00296dd9d1",
@@ -22,6 +21,26 @@ const Test = () => {
 			{
 				"_id": "6683961caf8428b8f75b1f7e",
 				"name": "Sita Ram Diwan Chand",
+				"rating": 4.2,
+				"address": "2243, Rajguru Marg, Chuna Mandi, Paharganj, New Delhi, Delhi 110055, India",
+				"latitude": 28.6423777,
+				"longitude": 77.21035499999999,
+				"phone_number": "099997 63765",
+				"website": "http://www.sitaramdiwanchand.co.in/",
+				"city": "Delhi",
+				"placeType": [
+					"restaurant",
+					"point_of_interest",
+					"food",
+					"establishment"
+				],
+				"created_at": "2024-07-02T05:54:36.757Z",
+				"updated_at": "2024-07-02T05:54:36.757Z",
+				"__v": 0
+			},
+			{
+				"_id": "6683961caf8428b8f75b1f7e",
+				"name": "Itachi",
 				"rating": 4.2,
 				"address": "2243, Rajguru Marg, Chuna Mandi, Paharganj, New Delhi, Delhi 110055, India",
 				"latitude": 28.6423777,
@@ -141,20 +160,16 @@ const Test = () => {
 	}
 	return (
 		<div class="grid grid-cols-2" >
-			<div class="bg-slate-700 h-[50vh] m-3"  	id="parent-div">
+			<div class="bg-slate-700 h-[30vh] m-3"  	id="parent-div">
 				<HoverWritter
 					chatItem={a}
-
 				/>
 			</div>
-
-			<div class="bg-slate-700 h-[20vh] m-3"  	id="parent-div-1">
+			<div class="bg-slate-700 h-[30vh] m-3"  	id="parent-div">
 				<HoverWritter
 					chatItem={a}
-
 				/>
 			</div>
-
 		</div>
 	)
 }
