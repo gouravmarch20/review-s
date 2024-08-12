@@ -17,8 +17,11 @@ const Chat = () => {
 	const [socketID, setSocketId] = useState("");
 	const [roomName, setRoomName] = useState("");
 
+	const [test, setTest] = useState("nothing")
 	const handleSubmit = (e) => {
 		e.preventDefault();
+		console.log(test);
+		
 		socket.emit("message", message);
 		setMessage("");
 
@@ -63,6 +66,9 @@ const Chat = () => {
 			<h5 className="text-green-400 ">
 				{socketID}
 			</h5>
+			<button onClick={()=>{
+				setTest("changed")
+			}}>change state </button>
 			<h2>Broadcast Chat </h2>
 			<form onSubmit={handleSubmit}>
 				<input
