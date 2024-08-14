@@ -1,75 +1,56 @@
-"use client"
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useRef, useState } from "react";
 import { io } from "socket.io-client";
 
 const Chat = () => {
-	const socket = useMemo(
-		() =>
-			io("http://localhost:8000", {
-				withCredentials: true,
-			}),
-		[]
-	);
+	const socket = useRef(
+		io("http://localhost:8000", {
+			withCredentials: true,
+		})
+	).current;
 
-	const [privateMsg, setPrivateMsg] = useState([]);
 	const [message, setMessage] = useState("");
-	const [room, setRoom] = useState("");
 	const [socketID, setSocketId] = useState("");
-	const [roomName, setRoomName] = useState("");
+	const [currentVal, setCurrentVal] = useState("nothing");
+	const currentValRef = useRef(currentVal);
 
-	const [test, setTest] = useState("nothing")
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(test);
-		
 		socket.emit("message", message);
 		setMessage("");
-
 	};
 
-	const handleSubmit1 = (e) => {
-		e.preventDefault();
-		socket.emit("private-room", { message, room });
-		setMessage("");
-	};
-
-	const joinRoomHandler = (e) => {
-		e.preventDefault();
-		socket.emit("join-room", roomName);
-		setRoomName("");
-	};
-
-	useEffect(() => {
+	// Handle WebSocket events
+	React.useEffect(() => {
 		socket.on("connect", () => {
 			setSocketId(socket.id);
 			console.log("connected", socket.id);
 		});
 
-		socket.on("receive-message", (data) => {
-			console.log("receive-message", data);
-			setPrivateMsg((messages) => [...messages, data]);
+		socket.on("testing", (data) => {
+			console.log("hero_", currentValRef.current);
 		});
 
-		// socket.on(" ", (data) => {
-		// 	console.log(data);
-		// 	setMessages((messages) => [...messages, data]);
+		// Cleanup on unmount
+		return () => {
+			socket.off("testing");
+		};
+	}, [socket]);
+
+	// Update currentVal and currentValRef in a single call
+	const handleChange = () => {
+		// setCurrentVal((prevVal) => {
+		// 	return "changed"; // Update state
 		// });
+		currentValRef.current = "changed"; // Update ref directly
 
-
-		// return () => {
-		// 	socket.disconnect();
-		// };
-	}, []);
+	};
 
 	return (
 		<div>
-			<h5 className="text-green-400 ">
-				{socketID}
-			</h5>
-			<button onClick={()=>{
-				setTest("changed")
-			}}>change state </button>
-			<h2>Broadcast Chat </h2>
+			<h5 className="text-green-400 ">{socketID}</h5>
+			<button onClick={handleChange}>change state</button>
+			<h2>Broadcast Chat</h2>
+			{/* <h1>{currentVal}</h1> */}
 			<form onSubmit={handleSubmit}>
 				<input
 					value={message}
@@ -79,96 +60,10 @@ const Chat = () => {
 					className="border-2 border-indigo-500/100 mr-1"
 					placeholder="type text"
 				/>
-
-				<button type="submit" >
-					Send
-				</button>
+				<button type="submit">Send</button>
 			</form>
-			<h2>Private  Chat - <span className="text-red-600  ">Room Concept</span> </h2>
+		</div>
+	);
+};
 
-			<form onSubmit={handleSubmit1}>
-				<input
-					value={message}
-					onChange={(e) => setMessage(e.target.value)}
-					id="outlined-basic"
-					label="Message"
-					className="border-2 border-indigo-500/100 mr-1"
-					placeholder="type text"
-
-				/>
-				<input
-					value={room}
-					onChange={(e) => setRoom(e.target.value)}
-					id="outlined-basic"
-					label="Room"
-					className="border-2 border-indigo-500/100 mr-1"
-					placeholder="type Room name"
-
-				/>
-				<button type="submit" >
-					Send
-				</button>
-			</form>
-			<div>
-				{
-					privateMsg?.map((p, i) => (
-						<p key={i} className="bg-gray-700 text-white">
-							{p}
-						</p>
-					))
-				}
-			</div>
-			{/*  */}
-			<h2>Group  Chat - <span className="text-red-900  ">Join Concept</span> </h2>
-
-			<div>
-				<input
-					value={roomName}
-					onChange={(e) => setRoomName(e.target.value)}
-					id="outlined-basic"
-					label="room name"
-					className="border-2 border-indigo-500/100 mr-1"
-					placeholder="type room name"
-				/>
-				<button type="submit" onClick={joinRoomHandler} >
-					Send
-				</button>
-			</div>
-
-			<form onSubmit={handleSubmit1} >
-
-				<div>
-					<input
-						value={message}
-						onChange={(e) => setMessage(e.target.value)}
-						id="outlined-basic"
-						label="Message"
-						className="border-2 border-indigo-500/100 mr-1"
-						placeholder="type text"
-
-					/>
-					<input
-						value={room}
-						onChange={(e) => setRoom(e.target.value)}
-						id="outlined-basic"
-						label="Room"
-						className="border-2 border-indigo-500/100 mr-1"
-						placeholder="type Room name"
-
-					/>
-					<button type="submit" >
-						Send
-					</button>
-
-
-
-				</div>
-
-			</form>
-
-		</div >
-
-	)
-}
-
-export default Chat
+export default Chat;
