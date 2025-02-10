@@ -1,373 +1,114 @@
-"use client";
-import React, { Fragment, useEffect, useState, useRef } from "react";
-import BottomRightSheet from "@/Components/Components/BottomRightSheet";
-import moment from "moment";
-import { _subscriptionPlanList } from "@/services/apis/GlobalAPIs";
-import { getGuestUserID } from "@/services/helper/SessionManager";
+function getGroupedOAuthTools(capabilityList, allowedLoginPlatforms) {
+  // Ensure capabilityList is an array, otherwise return an empty object
+ 
+  // Normalize allowedLoginPlatforms to lowercase for case-insensitive comparison
+  const normalizedPlatforms = Array.isArray(allowedLoginPlatforms)
+    ? allowedLoginPlatforms.map((p) => p.toLowerCase())
+    : [];
 
-import {
-  faBarsFilter,
-  faTrashCan,
-  faXmarkLarge,
-} from "@fortawesome/pro-light-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Button from "@/Components/Components/Button";
-import {
-  STORE_PRODUCT,
-  CLEAR_offset,
-  CLEAR_sortBy,
-} from "@/services/constant/marketPlaceConstant";
-import { faCartCircleExclamation } from "@fortawesome/pro-light-svg-icons";
-import {
-  clearHomePageState,
-  getCuratedFeedHome,
-} from "@/app/(pages)/redux/slices/marketPlaceSlice";
+  const groupedOAuthTools = capabilityList.reduce((acc, item) => {
+    // Ensure the item and necessary properties exist
+    if (!item || !item.toolDetail || !item.toolDetail.oauth_tools) return acc;
 
-import { redirect, useRouter, useSearchParams } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  getCartProduct,
-  changeCartNoOfItem,
-  getStoreProduct_WishList,
-  removeFromWishList,
-  addProductToCart,
-} from "@/app/(pages)/redux/slices/cartSlice";
-import { toast } from "react-toastify";
-import {
-  TOAST_DEFAULT,
-  REMOVE_PRODUCT_FROM_CART_MSG,
-  ADD_TO_CART_MSG,
-  FAIL_TO_ADD_IN_CART_MSG,
-  REMOVE_PRODUCT_FROM_WISHLIST,
-} from "@/services/constant/toastConstant";
-import ModalRsa from "@/Components/MarketPlace/components/modal/ModalRsa";
-import ModalAmbulance from "@/Components/MarketPlace/components/modal/ModalAmbulance";
-import ModalVarient from "@/Components/MarketPlace/components/modal/ModalVarient";
+    const { oauth_tools } = item.toolDetail;
 
-const WishlistDrawer = ({
-  bottomRightSheet,
-  placement,
-  handleSetBottomRightSheet,
-}) => {
-  const dispatch = useDispatch();
-  const { push } = useRouter();
-  const { data: session, status, token, update } = useSession();
-  const wishListItem = useSelector((state) => state?.cart?.wishListItem);
-
-  const [removeFromWishListLoading, setRemoveFromWishListLoading] =
-    useState("ideal");
-  let prevRemoveFromWishListLoading = useRef("ideal");
-
-  console.log(`  removeFromWishListLoading ++ `, removeFromWishListLoading);
-  // kogox
-  const [kogoxPackagePrice, setKogoxPackagePrice] = useState(0);
-  const subscriptionPlanList = async () => {
-    const subscriptionPlans = await _subscriptionPlanList();
-    if (subscriptionPlans?.data?.subscriptionNewPlanList) {
-      let plans = subscriptionPlans.data.subscriptionNewPlanList.sort(
-        (a, b) => b.days - a.days
-      );
-      console.log("first", plans[plans.length - 1].offer_price);
-      setKogoxPackagePrice(plans[plans.length - 1].offer_price);
-    }
-  };
-  useEffect(() => {
-    subscriptionPlanList();
-    return () => {
-      console.log(`unmount`);
-
-      dispatch(clearHomePageState({ CLEAR_offset, CLEAR_sortBy }));
-    };
-  }, []);
-  //
-
-  useEffect(() => {
-    return () => {
-      console.log("unmount 2", removeFromWishListLoading);
-      console.log("unmount 22", prevRemoveFromWishListLoading);
-      if (prevRemoveFromWishListLoading.current !== "ideal") {
-        let paloadFeed = {
-          cardType: "MARKETPLACECARD",
-          master_category_Name: "FORYOU",
-        };
-        dispatch(getCuratedFeedHome(paloadFeed));
+    // Check if oauth_tools is in allowedLoginPlatforms (case-insensitive)
+    if (
+      normalizedPlatforms.includes(oauth_tools.toLowerCase()) &&
+      item.client_id &&
+      item.client_secret &&
+      item.client_id.length >= 5 &&
+      item.client_secret.length >= 5
+    ) {
+      if (!acc[oauth_tools]) {
+        acc[oauth_tools] = [];
       }
-    };
-  }, []);
-
-  // const noOfItemsInWishlist = useSelector(
-  //   (state) => state?.cart?.noOfItemsInWishlist
-  // );
-  const [whichModalToShow, setwhichModalToShow] = useState({
-    variant: false,
-    ambulance: false,
-    rsa: false,
-  });
-  const [modalProductData, setModalProductData] = useState({});
-  const hasPro = session?.user?.hasPro;
-
-  useEffect(() => {
-    const wishListPayload = {
-      user_id: session?.user?._id,
-    };
-
-    dispatch(getStoreProduct_WishList(wishListPayload));
-  }, [session?.user?._id]);
-
-  const showModalBeforeAddToCart = (productData) => {
-    console.log(`  isFou--`, productData);
-
-    const wishListProduct = {
-      ...productData?.room_detail,
-      // _id : productData?.room_detail?._id ,
-      // image : productData.room_detail.image ,
-      // is_variant_available : productData.room_detail.is_variant_available ,
-      // room_price : productData.room_detail.room_price ,
-      // room_name : productData.room_detail.room_name ,
-      // room_description : productData.room_detail.room_description ,
-      // variantAttribute :  productData.room_detail.variantAttribute,
-      // variantList :  productData.room_detail.variantList,
-      // wheel_type :  productData.room_detail.wheel_type,
-      // place :  productData.room_detail.place,
-      // category :  productData.room_detail.category,
-    };
-    console.log(`  wishListProduct`, wishListProduct);
-
-    productData = { ...wishListProduct };
-
-    let isFound = false;
-    if (productData?.category?.category_name === "RSA") {
-      setwhichModalToShow((prev) => ({ ...prev, rsa: true }));
-      setModalProductData(productData);
-      isFound = true;
-    } else if (productData?.category?.category_name === "Ambulance") {
-      setwhichModalToShow((prev) => ({ ...prev, ambulance: true }));
-      setModalProductData(productData);
-      isFound = true;
-    } else if (productData?.is_variant_available) {
-      setwhichModalToShow((prev) => ({ ...prev, variant: true }));
-      setModalProductData(productData);
-      isFound = true;
+      acc[oauth_tools].push(item);
     }
-    console.log(` isFound `, isFound);
+    return acc;
+  }, {});
 
-    if (isFound) {
-      return false;
-    } else {
-      return true;
-    }
-  };
+  return Object.keys(groupedOAuthTools).length ? groupedOAuthTools : {};
+}
 
-  const handleDelete = (wishListItem) => {
-    setRemoveFromWishListLoading(true);
+// Sample input
+// const capabilityList = [
+//   {
+//     _id: "67a204d5abbc36c160963b8c",
+//     client_id: "U2FsdGVkX1/vBWs8vVzyY7oYl7mlRm94rnPq+6St/fs=",
+//     client_secret: "U2FsdGVkX1+chIxfuFqoMfX+ORTfZk2ycoYWCdUSZfA=",
+//     toolDetail: { _id: "673ee2ff71c2106d84597bc6", oauth_tools: "Slack" },
+//   },
+//   {
+//     _id: "67a204d5abbc36c160963b8c",
+//     client_id: "U2FsdGVkX1/vBWs8vVzyY7oYl7mlRm94rnPq+6St/fs=",
+//     client_secret: "U2FsdGVkX1+chIxfuFqoMfX+ORTfZk2ycoYWCdUSZfA=",
+//     toolDetail: { _id: "673ee2ff71c2106d84597bc6", oauth_tools: "Gmail" },
+//   },
+//   {
+//     _id: "67a204e6abbc36c160965d69",
+//     client_id: "67a204e6abbc36c160965d69", // Invalid (empty)
+//     client_secret: "U2FsdGVkX1+r+z8Yb7+NkmyRxZ7kIznk/wVbX+cWCrin8Plx8ymRDLoGRdvPZSIfyKdK+WNBgrdJdLCvHOU7YQ==",
+//     toolDetail: { _id: "673ea683392f9043440e878b", oauth_tools: "Gmail" },
+//   },
+//   {
+//     _id: "67a20798abbc36c16096ad3b",
+//     client_id: "U2FsdGVkX1+PvwJqeR2DT7Nm5g9k7mMmJSMIU1EMC/o=",
+//     client_secret: "123", // Invalid (too short)
+//     toolDetail: { _id: "661363efa339a5f10b1a9cce", oauth_tools: "Slack" },
+//   },
+// ];
 
-    const removeProductPayload = {
-      _id: wishListItem?._id,
-    };
-    dispatch(removeFromWishList(removeProductPayload)).then(() => {
-      const getWishP = {
-        user_id: session?.user?._id,
-      };
-      toast.success(REMOVE_PRODUCT_FROM_WISHLIST, TOAST_DEFAULT);
+const capabilityList = [
+  {
+    _id: "678ba825d36261ebedb99309",
+    client_id: "U2FsdGVkX1/T6amSZwcQMTK77dkdYSVKr5OeRznnVLw=",
+    client_secret: "U2FsdGVkX1/pXy79LJuj3Sz9E1buK4q4yQ7F2OHOv78=",
+    toolDetail: {
+      _id: "65f29a2144deadc7c6673a2d",
+      oauth_tools: null,
+    },
+  },
+  {
+    _id: "67946f5066ec0718cef2ce32",
+    client_id: "U2FsdGVkX1+zoJlahC8YJ2UR8GoJ3MxgHcFVgx3kzEY=",
+    client_secret: "U2FsdGVkX1+NQmxIFU7aNoZZsRgDyaJoQo8c5M1awPQ=",
+    toolDetail: {
+      _id: "66585351c43db924051de771",
+      oauth_tools: null,
+    },
+  },
+  {
+    _id: "67a204d5abbc36c160963b8c",
+    client_id: "U2FsdGVkX18Dmu+7z5pFKIaObMzBghFi3RBVZx6SxGQ=",
+    client_secret: "U2FsdGVkX1/3yOUBXACeBZOErsccubK+dWYNMpWxwTU=",
+    toolDetail: {
+      _id: "673ee2ff71c2106d84597bc6",
+      oauth_tools: "Slack",
+    },
+  },
+  {
+    _id: "67a204e6abbc36c160965d69",
+    client_id:
+      "U2FsdGVkX1/Nr2nTmitaObSJxPA/mmvVKbGEcY4RXdE4EEExdocnfrjitAzgy1Zn49UqIVYf1aJsW6b9SYFKHXps5AhF9ZmK1nkXbb2mdgkdkgv8VobG6fMSR6V5N3Kn",
+    client_secret:
+      "U2FsdGVkX1/ahPUovOzbBVL9z275qXkkHJ8P98kToR6YO4b8uMzZOx8QsgTLBTKhpDg90YKS25Eg/rA5ev7OGA==",
+    toolDetail: {
+      _id: "673ea683392f9043440e878b",
+      oauth_tools: "Gmail",
+    },
+  },
+  {
+    _id: "67a20798abbc36c16096ad3b",
+    client_id: "U2FsdGVkX1/ECRhBBijt7vqei/fnvM9HHvk2TQnuBpE=",
+    client_secret: "U2FsdGVkX19+ymw/DtpsovOJjznHp1pXpG9Pq1ym6Mc=",
+    toolDetail: {
+      _id: "661363efa339a5f10b1a9cce",
+      oauth_tools: null,
+    },
+  },
+];
 
-      dispatch(getStoreProduct_WishList(getWishP)).then(() => {
-        setRemoveFromWishListLoading(false);
-        prevRemoveFromWishListLoading.current = false;
-      });
-    });
-  };
+const allowedLoginPlatforms = ["Gmail", "Slack"];
 
-  const handleAddToCart = (cardData) => {
-    if (showModalBeforeAddToCart(cardData)) {
-      const addProductPayload = {
-        item_id: cardData?.room_detail?._id,
-        user_id: null,
-        guest_user_id: "",
-        item_qty: 1,
-        selected_vehicle_id: [],
-        start_date: moment().unix(),
-        end_date: moment.unix(),
-      };
-      const getCartPayload = {
-        guest_user_id: "",
-        user_id: "",
-      };
-
-      if (status === "authenticated") {
-        addProductPayload.user_id = session?.user?._id;
-        getCartPayload.user_id = session?.user?._id;
-      } else if (status == "unauthenticated") {
-        addProductPayload.guest_user_id = getGuestUserID();
-        getCartPayload.guest_user_id = getGuestUserID();
-      }
-      console.log(` addProductPayload `, addProductPayload);
-
-      dispatch(addProductToCart(addProductPayload)).then((res) => {
-        console.log(`addProductToCart  `, res);
-
-        if (res?.payload) {
-          toast.success(ADD_TO_CART_MSG, TOAST_DEFAULT);
-        } else {
-          toast.error(FAIL_TO_ADD_IN_CART_MSG, TOAST_DEFAULT);
-        }
-        dispatch(getCartProduct(getCartPayload));
-      });
-    }
-  };
-
-  return (
-    <div className="position-relative">
-      <BottomRightSheet
-        openTo={bottomRightSheet}
-        close={() => handleSetBottomRightSheet("")}
-        name="Sorting"
-        title=""
-        preFixAction={
-          <span className="   p-7p  inline-block rounded ui-label ">
-            Wishlist
-          </span>
-        }
-        postFixAction={
-          <button
-            type="button"
-            className="bg-transparent border-0 shadow-none text-decoration-none button-label text-active p-0 "
-            onClick={() => handleSetBottomRightSheet("")}
-          >
-            <FontAwesomeIcon icon={faXmarkLarge} className="text-kogo-white" />
-          </button>
-        }
-        placement={placement}
-      >
-        <div className="" style={{ paddingBottom: "200px" }}>
-          {wishListItem?.length !== 0 ? (
-            wishListItem?.map((wishListItem) => (
-              <>
-                <div
-                  className="row g-3  border-bottom  border-disabled  p-3"
-                  key={wishListItem?._id}
-                >
-                  <div className="col-3 mt-4">
-                    <img
-                      src={wishListItem?.room_detail?.image[0]}
-                      className="rounded object-fit-cover "
-                      width={70}
-                      height={70}
-                    />
-                  </div>
-                  <div className="col-8 mt-4 ">
-                    <p className="body lc">
-                      {wishListItem?.room_detail?.room_name}
-                    </p>
-                    {/* <p className="button-label">
-                      {" "}
-                      ₹{" "}
-                      {wishListItem?.room_detail?.room_price?.toLocaleString()}
-                    </p> */}
-
-
-                          {/* {session?.user?.hasPro ? ( */}
-                          {true ? (
-
-<div className="mb-10p">
-  <p className="mb-0 caption-subtitle text-invalid text-decoration-line-through mt-2">
-    {/* real price  */}₹
-    {wishListItem?.room_detail?.room_price?.toLocaleString()}
-  </p>
-
-  <div className="caption-subtitle mt-0">
-    <span className="text-special me-1 button-label">
-      {/* Discount */}₹
-      {(
-        wishListItem?.room_detail?.room_price -
-        wishListItem?.room_detail?.max_coin
-      ).toLocaleString()}
-    </span>{" "}
-  </div>
-</div>
-) : (
-<>
-  <p className="mb-0 caption-subtitle text-info title mt-2">
-    ₹{wishListItem?.room_detail?.room_price?.toLocaleString()}
-  </p>
-</>
-)}
-                    <div>
-                      <Button
-                        title="Add To Cart"
-                        onClick={() => handleAddToCart(wishListItem)}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-1 mt-4">
-                    <FontAwesomeIcon
-                      icon={faTrashCan}
-                      className="text-danger cursor-pointer"
-                      onClick={() =>
-                        removeFromWishListLoading !== true
-                          ? handleDelete(wishListItem)
-                          : ""
-                      }
-                    />
-                  </div>
-                </div>
-              </>
-            ))
-          ) : (
-            <>
-              <div
-                style={{
-                  width: "100%",
-                  height: "500px",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <div className="d-flex flex-column mb-0 text-center">
-                  <div className="px-2">
-                    <FontAwesomeIcon
-                      icon={faCartCircleExclamation}
-                      size="2xl"
-                    />
-                  </div>
-                  <div className="px-2">
-                    <p className="text-center profiletitle mb-0">
-                      No products in Wishlist
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-      </BottomRightSheet>
-
-      {whichModalToShow?.rsa ? (
-        <ModalRsa
-          setwhichModalToShow={setwhichModalToShow}
-          whichModalToShow={whichModalToShow}
-          modalProductData={modalProductData}
-        />
-      ) : null}
-      {whichModalToShow?.ambulance ? (
-        <ModalAmbulance
-          setwhichModalToShow={setwhichModalToShow}
-          whichModalToShow={whichModalToShow}
-          modalProductData={modalProductData}
-        />
-      ) : null}
-      {whichModalToShow?.variant ? (
-        <ModalVarient
-          setwhichModalToShow={setwhichModalToShow}
-          whichModalToShow={whichModalToShow}
-          modalProductData={modalProductData}
-          hasPro={hasPro}
-          kogoxPackagePrice={kogoxPackagePrice}
-        />
-      ) : null}
-    </div>
-  );
-};
-
-export default WishlistDrawer;
+console.log(getGroupedOAuthTools(capabilityList));

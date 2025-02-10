@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Image from "next/image";
 import SwipperWithThumbnail from "@/components/home/SwipperWithThumbnail";
 import Footer from "@/components/home/footer/Footer";
@@ -6,10 +6,14 @@ import FooterSection from "@/components/home/footer/FooterSection";
 import Subscribe from "@/components/home/suscribe/Subscribe";
 import Slider from "@/components/home/slider/Slider";
 import React, { useEffect, useState } from "react";
-import { LIGHT, DARK , THEME_MODE } from "@/constants/themeConstant";
+import { LIGHT, DARK, THEME_MODE } from "@/constants/themeConstant";
+
+import { SessionProvider } from "next-auth/react";
+import Auth from "./Auth";
 
 export default function Home() {
   const [data, setData] = useState([]);
+
 
   // const selectTheme = localStorage.getItem(THEME_MODE);
   const [theme, setTheme] = useState("light");
@@ -51,7 +55,10 @@ export default function Home() {
 
   return (
     <div className=" body">
-      <div className="review p-2 pt-6">
+      <SessionProvider>
+        <h2>dd</h2>
+        <Auth/>
+        {/* <div className="review p-2 pt-6">
         <Footer handleThemeChange={handleThemeChange} theme={theme} />
 
         <SwipperWithThumbnail />
@@ -60,7 +67,8 @@ export default function Home() {
 
         <Subscribe />
         <FooterSection />
-      </div>
+      </div> */}
+      </SessionProvider>
     </div>
   );
 }

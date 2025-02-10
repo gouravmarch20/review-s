@@ -1,105 +1,64 @@
+const deploymentData = [
+  {
+    _id: "676542b3c87afe64a98a9aaa",
+    deployment_name: "Gmail Agent",
+    questio_suggestions: ["Can you please check my email list"],
+    is_user_login_required: true,
+    allowed_login_platforms: ["Gmail"],
+    capability_list: [
+      {
+        _id: "67654712c87afe64a98aaeca",
+        client_id: "U2FsdGVkX1+ffaq6cP9hU+vtUn4Tb5CGbrImJNWjHnY=",
+        client_secret: "U2FsdGVkX1/ALrakNRpWVqLuTkpNDfrpK8QRDmCAeeQ=",
+        toolDetail: {
+          _id: "673ea683392f9043440e878b",
+          oauth_tools: "Gmail",
+        },
+      },
+    ],
+  },
+  {
+    _id: "67764cd10b78d1f8ba9e81ae",
+    deployment_name: "Weather Kogo",
+    questio_suggestions: ["weather in Delhi"],
+    is_user_login_required: false,
+    allowed_login_platforms: [],
+    capability_list: [
+      {
+        _id: "67764cd10b78d1f8ba9e8177",
+        client_id: "U2FsdGVkX1/S0NepflwSFOrQq1bqYzrRgpCdrbw7cd8=",
+        client_secret: "U2FsdGVkX18HV3rE1MZz9B+KqMayzxRoy3Xcs31XWso=",
+        toolDetail: {
+          _id: "660ceef800ade56d3399412e",
+          oauth_tools: null,
+        },
+      },
+    ],
+  },
+];
+const allowPlatForm = ["Gmail", "Slack"];
 
- const _pushMessageLocally = async (data) => {
-    try {
-      // set thread id
-    console.log(`isUserTypeSomething` , isUserTypeSomething)
-    
-      if(!isUserTypeSomething.current){
-        return 
-      }
-      
-
-      if (!myTreadId) {
-        await addParams(data);
-      }
-     
-
-      if (data.thread_id == myTreadId) {
-        setIsGettingReply((prev) =>
-          prev === true && data?.chat_ref_id ? false : true
-        );
-
-        setCurrentChatFullRes(data);
-        if (data?.placesData?.length > 0) {
-          const res = getFilterPlaceData(data?.placesData);
-          setMapPlaces(res);
-
-          const resCard = await getFilterPlaceDataCard(data?.placesData);
-          setMapPlacesCard(resCard);
-        }
-        if (data.thread_id) {
-          // console.log("setting selectedThread_id via _pushMessageLocally");
-          setselectedThread_id(data.thread_id);
-        }
-
-        // receiver msg code then show on top
-        const chat = [
-          {
-            _id: data.timestamp,
-            is_msg_not_printed: data.user == getKey("kogonautID") ? 1 : 0,
-            waiting: false,
-            message: data.message,
-            image: data.image,
-            card_data: data.card_data ?? null,
-            sent_at: data.timestamp,
-            user: {
-              _id: data.user,
-              first_name: "",
-              last_name: "",
-              profile_image: "",
-            },
-            category: data?.category,
-            placesData: data?.placesData,
-          },
-        ];
-
-        let msg =
-          data.user === props.login_user_id &&
-          data.isImagePath &&
-          data.isImagePath === "yes"
-            ? false
-            : true;
-
-        if (msg) {
-          setchats((prevChats) => {
-            const lastChatIndex = prevChats.length - 1;
-            // console.log("before condition", prevChats[lastChatIndex], ...chat);
-            if (lastChatIndex >= 0) {
-              // console.log("pushmessage chats...");
-              if (prevChats[lastChatIndex]?.user?._id != chat[0].user._id) {
-                // console.log(
-                //   "in condition",
-                //   prevChats[lastChatIndex]?.user?._id,
-                //   chat[0].user._id
-                // );
-                const updatedChats = [...prevChats, ...chat];
-                // console.log("updatedLastChat if", updatedChats);
-                return updatedChats;
-              } else {
-                // Clone the last chat object and append the new data
-                const updatedLastChat = {
-                  ...prevChats[lastChatIndex],
-                  ...chat[0],
-                };
-                // console.log("updatedLastChat else", updatedLastChat);
-                // Update the chats array with the updated last chat object
-                return [...prevChats.slice(0, lastChatIndex), updatedLastChat];
-              }
-            } else {
-              // If the chats array is empty, simply add the new chat
-              // console.log("pushmessage chats... in empty array");
-              return [...chat];
-            }
-          });
-
-          setWaitingForReply(
-            data.is_boat_reply && data.is_boat_reply == "yes" ? false : true
-          );
-
-
-        }
-      }
-    } catch (err) {
-      console.log(err.message);
-    }
+const getFistValidPlatform = (deploymentData, allowPlatForm) => {
+  const result = {
+    Gmail: [],
+    Slack: [],
   };
+  for (let i = 0; i < deploymentData.length; i++) {
+    const capability_list = deploymentData?.capability_list;
+    if (
+      allowPlatForm.includes(
+        capability_list?.map((c) => c?.toolDetail?.oauth_tools)
+      )
+    ) {
+      capability_list?.forEach((c) => {
+        if (allowPlatForm.includes(c?.toolDetail?.oauth_tools)) {
+          result.c?.toolDetail?.oauth_tools.push(c);
+        }
+      });
+    }
+  }
+  return null;
+};
+
+const v = getFistValidPlatform(deploymentData, allowPlatForm);
+console.log(v);

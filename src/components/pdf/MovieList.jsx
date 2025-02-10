@@ -1,127 +1,96 @@
-"use client";
-import React, { useState } from "react";
-import Axios from "axios";
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import { API_KEY, POSTER_PATH } from "./constants";
-import PdfDocument from "./Movie";
-import moment from "moment";
-import carBlack from "@/assets/blackCar.png";
-import Image from "next/image";
+import { useEffect, useState } from "react";
+import { UAParser } from "ua-parser-js";
 
-const years = [
-  { value: "2010", text: "2010" },
-  { value: "2011", text: "2011" },
-  { value: "2012", text: "2012" },
-  { value: "2013", text: "2013" },
-  { value: "2014", text: "2014" },
-  { value: "2015", text: "2015" },
-  { value: "2016", text: "2016" },
-  { value: "2017", text: "2017" },
-  { value: "2018", text: "2018" },
-  { value: "2019", text: "2019" },
-  { value: "2020", text: "2020" },
-  { value: "2021", text: "2021" },
-  { value: "2022", text: "2022" },
-  { value: "2023", text: "2023" },
-];
+// Stable Hashing Function
+const hashString = async (str) => {
+  try {
+    const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buffer))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+  } catch (e) {
+    console.warn("Hashing failed, using Base64 fallback", e);
+    return btoa(str).replace(/=/g, "");
+  }
+};
 
-export default function MovieList() {
-  const [year, setYear] = useState("");
-  const [movieDetails, setDetails] = useState([]);
-  const [show, setHide] = useState(false);
+// Detect Brave Browser
+const isBrave = async () => navigator.brave && (await navigator.brave.isBrave());
 
-  const fetchMovie = async (e) => {
-    setYear(e.target.value);
+// Extract Fingerprint Data
+const getFingerprintData = async () => {
+  const parser = new UAParser();
+  const { browser, os, device } = parser.getResult();
+  const screenRes = `${window.screen.width}x${window.screen.height}`;
+  const braveDetected = await isBrave();
+
+  // Stable WebGL Hashing
+  const getWebGLHash = () => {
     try {
-      let res = await Axios(
-        `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&primary_release_year=${year}&sort_by=vote_average.desc`
-      );
-      setDetails(res.data.results);
-      setHide(true);
-    } catch (error) {
-      console.log(error);
+      const canvas = document.createElement("canvas");
+      const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+      return gl
+        ? (gl.getParameter(gl.RENDERER) + "|" + gl.getParameter(gl.VENDOR)).toLowerCase().trim()
+        : "No WebGL";
+    } catch {
+      return "No WebGL";
     }
   };
 
-  return (
-    <div className="container">
-      {/* <img src={carBlack} width={200} height={200} /> */}
-      <Image
-        // src="/profile.png"
-        src={carBlack}
-        width={500}
-        height={500}
-        alt="Picture of the author"
-      />
-      <h2>Best movies of the year</h2>
-      <label htmlFor="movies">Select Year</label>
-      <select id="movies" className="select" onChange={fetchMovie}>
-        <option defaultValue="" disabled>
-          Select your option
-        </option>
-        {years.map((year, index) => {
-          return (
-            <option key={index} value={year.value}>
-              {year.text}
-            </option>
-          );
-        })}
-      </select>
-      {show && (
-        <PDFDownloadLink
-          document={<PdfDocument data={movieDetails} />}
-          fileName="movielist.pdf"
-          style={{
-            textDecoration: "none",
-            padding: "10px",
-            color: "#4a4a4a",
-            backgroundColor: "#f2f2f2",
-            border: "1px solid #4a4a4a",
-            width: "40%",
-          }}
-        >
-          {({ blob, url, loading, error }) =>
-            loading ? "Loading document..." : "Download Pdf"
-          }
-        </PDFDownloadLink>
-      )}
-      {Array.isArray(movieDetails)
-        ? movieDetails.map((a, index) => {
-            return (
-              <div class="card" key={index}>
-                <img
-                  src={
-                    a.poster_path !== null
-                      ? `${POSTER_PATH}${a.poster_path}`
-                      : "150.jpg"
-                  }
-                  alt="Avatar"
-                  styles={{ width: "100%" }}
-                />
-                <div class="card-container">
-                  <h4>
-                    <b>{a.title}</b>
-                  </h4>
-                  <div className="card-subsection">
-                    <p>{a.vote_count} votes</p>
-                    <p>
-                      <span className="votes">{a.popularity}</span> Popularity{" "}
-                    </p>
-                  </div>
-                  <p>{a.overview}</p>
-                  <div className="card-footer">
-                    <p>Language: {a.original_language.toUpperCase()}</p>
-                    <p>Average Votes: {a.vote_average}</p>
-                    <p>
-                      Release Date:{" "}
-                      {moment(a.release_date, "YYYY-MM-DD").format(" MMMM D Y")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })
-        : ""}
-    </div>
-  );
+  // Stable AudioContext Hashing
+  const getAudioHash = () => {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      return audioContext.sampleRate.toString();
+    } catch {
+      return "No Audio";
+    }
+  };
+
+  const webGL = getWebGLHash();
+  const audioHash = getAudioHash();
+
+  return braveDetected
+    ? `${os.name}||${device.model || "Unknown"}||${screenRes}||Brave||${webGL}||${audioHash}`
+    : `${os.name}||${device.model || "Unknown"}||${screenRes}||${browser.name}||${webGL}||${audioHash}`;
+};
+
+// Generate Stable Fingerprint
+const getFingerprint = async () => {
+  try {
+    const data = await getFingerprintData();
+    return await hashString(data);
+  } catch (e) {
+    console.error("Fingerprint generation failed:", e);
+    return "Error";
+  }
+};
+
+// Native Cookie Helpers
+const setCookie = (name, value, days = 365) => {
+  const expires = new Date();
+  expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+};
+
+const getCookie = (name) => {
+  const match = document.cookie.match(new RegExp(`(^| )${name}=([^;]+)`));
+  return match ? match[2] : "";
+};
+
+function App() {
+  const [fingerprint, setFingerprint] = useState(() => getCookie("fingerprint") || "");
+
+  useEffect(() => {
+    if (!fingerprint) {
+      getFingerprint().then((fp) => {
+        setFingerprint(fp);
+        setCookie("fingerprint", fp, 365);
+      });
+    }
+  }, [fingerprint]);
+
+  return <div>Device Fingerprint: {fingerprint}</div>;
 }
+
+export default App;
